@@ -1,0 +1,68 @@
+﻿
+<div class="modal fade ng-scope in" style="display: block;" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="close('Cancel')" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">The Car!</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <table id="modal-table">
+                            <tr>
+                                <td>Year:</td>
+                                <td>{{car.Year}}</td>
+                            </tr>
+                            <tr>
+                                <td>Make:</td>
+                                <td>{{car.Make}}</td>
+                            </tr>
+                            <tr>
+                                <td>Model:</td>
+                                <td>{{car.Model}}</td>
+                            </tr>
+                            <tr>
+                                <td>Trim:</td>
+                                <td>{{car.Trim}}</td>
+                            </tr>
+                            <tr>
+                                <td>Seats:</td>
+                                <td>{{car.Seats}}</td>
+                            </tr>
+                            <tr>
+                                <td>Doors:</td>
+                                <td>{{car.Doors}}</td>
+                            </tr>
+                            <tr>
+                                <td>Top Speed:</td>
+                                <td>{{car.TopSpeed}}</td>
+                            </tr>
+                            <tr>
+                                <td>Drive Type:</td>
+                                <td>{{car.DriveType}}</td>
+                            </tr>
+                            <tr>
+                                <td>Transmission<br />Type:</td>
+                                <td>{{car.TransmissionType}}</td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+                    <div class="col-md-6">
+                        <img ng-src="{{car.url}}" alt="Car Picture" style="max-width: 300px;" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" ng-click="close('Yes')" class="btn btn-primary" data-dismiss="modal">Back To Car Finder</button>
+            </div>
+        </div>
+    </div>
+</div>

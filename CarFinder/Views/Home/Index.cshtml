@@ -1,0 +1,103 @@
+﻿@section Scripts {
+
+    <script src="https://www.google.com/jsapi"></script>
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/angular-resource.min.js"></script>
+    <script src="~/Scripts/angular-animate.min.js"></script>
+    <script src="~/Scripts/angular-modal-service.js"></script>
+
+    <script src="~/Scripts/App/CarFinderModule.js"></script>
+
+    <script src="~/Scripts/App/CarFinderSvc - HCL.js"></script>
+
+    <script src="~/Scripts/App/CarFinderCtrl.js"></script>
+    <script src="~/Scripts/App/CarFinderCtrl - Modal.js"></script>
+
+    <script src="~/Scripts/App/CarFinderDirective - GPics.js"></script>
+    <script src="~/Scripts/App/CarFinderDirective - NoAnimate.js"></script>
+
+}
+
+
+<div class=" text-center">
+    <h1>Angular Car Finder</h1>
+    <p class="lead">What car will you find? </p>
+</div>
+<div no-animate class="row"> @* no animtate for entire row *@
+    <div class="col-md-3">
+        <label class="form-label">Year <span class="text-muted" ng-show="vm.years.length == 0">(Loading...)</span></label>
+        <select no-animate class="form-control" ng-model="vm.carYear" ng-change="vm.update('makes')" ng-disabled="vm.years.length == 0">
+            <option></option>
+            <option ng-repeat="year in vm.years" value="{{year}}">{{year}}</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Make <span class="text-muted" ng-show="vm.makes.length == 0">(Loading...)</span></label>
+        <select class="form-control" ng-model="vm.carMake" ng-change="vm.update('models')" ng-disabled="vm.makes.length == 0">
+            <option></option>
+            <option ng-repeat="make in vm.makes" value="{{make}}">{{make}}</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Model</label>
+        <select class="form-control" ng-model="vm.carModel" ng-change="vm.update('trims')" ng-disabled="!vm.carMake || vm.models.length == 0">
+            <option></option>
+            <option ng-repeat="model in vm.models" value="{{model}}">{{model}}</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Model Trim</label>
+        <select class="form-control" ng-model="vm.carTrim" ng-change="vm.getCarTable(1)" ng-disabled=" !vm.carModel || vm.trims.length == 0">
+            <option></option>
+            <option ng-repeat="trim in vm.trims" value="{{trim}}">{{trim}}</option>
+        </select>
+    </div>
+</div>
+
+@*<div>
+        <p>
+            carYear: {{vm.carYear}}<br />
+            carMake: {{vm.carMake}}<br />
+            carModel: {{vm.carModel}}<br />
+            carTrim: {{vm.carTrim}}
+        </p>
+    </div>*@
+<div ng-cloak ng-hide="vm.queryParams.year == vm.queryParams.make">
+    <div class="text-center">
+        <ul class="pagination">
+            <li ng-click="vm.newPage('Prev')"><a><<</a></li>
+            <li><a>showing {{vm.carTable.from}} to {{vm.carTable.to}} of {{vm.carTable.total}}.</a></li>
+            <li ng-click="vm.newPage('Next')"><a>>></a></li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="text-center"><a class="btn btn-default" ng-click="vm.sort('year')">Year{{vm.arrow("year")}}</a></th>
+                    <th class="text-center"><a class="btn btn-default" ng-click="vm.sort('make')">Make{{vm.arrow("make")}}</a></th>
+                    <th class="text-center"><a class="btn btn-default" ng-click="vm.sort('model')">Model{{vm.arrow("model")}}</a></th>
+                    <th class="text-center"><a class="btn btn-default" ng-click="vm.sort('trim')">Trim{{vm.arrow("trim")}}</a></th>
+                    <th class="text-center">Pic <br />( mouse over )</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                <tr ng-repeat="car in vm.carTable.cars">
+                    <td>{{car.Year}}</td>
+                    <td>{{car.Make}}</td>
+                    <td>{{car.Model}}</td>
+                    <td>{{car.Trim}}</td>
+                    <td class="center-item go-search" style="width:100px;">
+                        <google-thumbnail car="car" search-term="{{car.Year + ' ' + car.Make + ' ' + car.Model + ' ' + car.Trim}}" />
+                    </td>
+                    <td class="text-center"><a class="btn btn-primary" ng-click="vm.showDetailsModal(car)">Details</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* View for theDetails page *@
+<div ng-include="" ng-show=""></div>
