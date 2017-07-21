@@ -1,4 +1,4 @@
-﻿/// <reference path="carfindermodule.ts" />
+/// <reference path="carfindermodule.ts" />
 var CarFinder;
 (function (CarFinder) {
     function NoAnimation($animate) {
@@ -9,7 +9,6 @@ var CarFinder;
             }
         };
     }
-
     angular.module("CarFinder").directive('noAnimate', ['$animate', NoAnimation]);
 })(CarFinder || (CarFinder = {}));
 //# sourceMappingURL=CarFinderDirective - NoAnimate.js.map
