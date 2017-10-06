@@ -13,7 +13,6 @@ using System.Web.Http;
 
 namespace CarFinder.Controllers
 {
-    
     /// <summary>
     /// Controller to get all car info from our system.
     /// </summary>
@@ -26,15 +25,16 @@ namespace CarFinder.Controllers
         /// Function that returns all of the cars the fit the given paramters.
         /// at least one of the params year, make, model must be given.
         /// trim and page are optional
-        /// </summary>
-        /// <param name="year"></param>
-        /// <param name="make"></param>
-        /// <param name="model"></param>
-        /// <param name="trim"></param>
-        /// <param name="page"></param>
-        /// <returns></returns>
+        /// </summary>        
         [Route("")]
-        public IHttpActionResult GetCars(int? year = null, string make = null, string model = null, string trim = null, int? page = 1, string sort = null, string order = null) 
+        public IHttpActionResult GetCars(
+              int? year = null,
+            string make = null,
+            string model = null,
+            string trim = null,
+              int? page = 1,
+            string sort = null,
+            string order = null)
         {
             // create and open a new connection object
             using (SqlConnection conn = DB.GetOpenConnection())
@@ -42,32 +42,38 @@ namespace CarFinder.Controllers
                 // create a comand object identifying the stored procedure
                 SqlCommand cmd = DB.StoredProc("GetCars", conn);
 
-                // add filtering paramaters to command
-                if (year != null) cmd.Parameters.Add(new SqlParameter("@year", year));
-                if (make != null) cmd.Parameters.Add(new SqlParameter("@make", make));
-                if (model != null) cmd.Parameters.Add(new SqlParameter("@model", model));
-                if (trim != null) cmd.Parameters.Add(new SqlParameter("@trim", trim));
-                if (sort != null) cmd.Parameters.Add(new SqlParameter("@sort", sort));
-                if (order != null) cmd.Parameters.Add(new SqlParameter("@order", order));
+                void addParam<T>(string name, T val) => cmd.Parameters.Add(new SqlParameter(name, val));
 
-                // CHECK page input!
-                if (page < 1) page = 1;
+                // add filtering paramaters to command
+                if (year != null) addParam("@year", year);
+                if (make != null) addParam("@make", make);
+                if (model != null) addParam("@model", model);
+                if (trim != null) addParam("@trim", trim);
+                if (sort != null) addParam("@sort", sort);
+                if (order != null) addParam("@order", order);
+
+                var badPage = page < 1;
+                if (badPage) page = 1;
+
+
                 cmd.Parameters.Add(new SqlParameter("@page", page));
 
 
+                SqlParameter addOutputParam(string name)
+                {
+                    var param = new SqlParameter(name, 0);
+                    param.Direction = ParameterDirection.Output;
+
+                    cmd.Parameters.Add(param);
+
+                    return param;
+                }
+
                 // add output params to command
-                var from = new SqlParameter("@from", 0);
-                from.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(from);
+                var from = addOutputParam("@from");
+                var to = addOutputParam("@to");
+                var total = addOutputParam("@total");
 
-                var to = new SqlParameter("@to", 0);
-                to.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(to);
-
-                var total = new SqlParameter("@total", 0);
-                total.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(total);
-                
                 // execute the command
                 SqlDataReader rdr = cmd.ExecuteReader();
 
@@ -79,18 +85,18 @@ namespace CarFinder.Controllers
                 while (rdr.Read())
                     cars.Add(new Car(rdr));
 
-                // so you HAVE to close the connection to get the values from your output parameter. (BUT WHY??)
+                // so you HAVE to close the connection to get the values from your output parameter. (but why?)_
                 conn.Close();
-                
+
                 // This functions needs to also return some info, like what cars out of the total are being returned,
-                // SO angular will know when to continue pageing and when to stop.
+                // SO angular will know when to continue paging and when to stop.
                 var carSet = Json(new
                 {
                     from = from.Value,
                     to = to.Value,
                     total = total.Value,
                     cars = cars
-                }); 
+                });
 
                 return carSet;
             }
@@ -102,15 +108,13 @@ namespace CarFinder.Controllers
         /// <summary>
         /// Get car with a given id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [Route("{id:int}")]
         public IHttpActionResult GetCarById(int id)
         {
-            using(SqlConnection conn = DB.GetOpenConnection())
-	        {
+            using (SqlConnection conn = DB.GetOpenConnection())
+            {
                 // get car from db.
-		        SqlCommand sqlGetCarById = DB.StoredProc("GetCarById", conn);
+                SqlCommand sqlGetCarById = DB.StoredProc("GetCarById", conn);
                 sqlGetCarById.Parameters.Add(new SqlParameter("@id", id));
 
                 SqlDataReader rdr = sqlGetCarById.ExecuteReader();
@@ -119,24 +123,27 @@ namespace CarFinder.Controllers
 
                 if (rdr.Read())
                 {
-                    Car car = new Car {
-                        Id = rdr["id"].ToString(),
-                        Year = rdr["year"].ToString(),
-                        Make = rdr["make"].ToString(),
-                        Model = rdr["model"].ToString(),
-                        Trim = rdr["trim"].ToString(),
-                        TopSpeed = rdr["top_speed"].ToString(),
-                        TransmissionType = rdr["transmission_type"].ToString(),
-                        Seats = rdr["seats"].ToString(),
-                        Doors = rdr["doors"].ToString(),
-                        DriveType = rdr["drive_type"].ToString()
+                    string Get(string s) => rdr[s].ToString();
+
+                    Car car = new Car
+                    {
+                        Id = Get("id"),
+                        Year = Get("year"),
+                        Make = Get("make"),
+                        Model = Get("model"),
+                        Trim = Get("trim"),
+                        TopSpeed = Get("top_speed"),
+                        TransmissionType = Get("transmission_type"),
+                        Seats = Get("seats"),
+                        Doors = Get("doors"),
+                        DriveType = Get("drive_type"),
                     };
 
                     return Ok(car);
                 }
 
                 return BadRequest();
-	        }
+            }
         }
 
         /// signature: api/cars/years
@@ -144,7 +151,6 @@ namespace CarFinder.Controllers
         /// <summary>
         /// Get a list of years for cars in HCL2.
         /// </summary>
-        /// <returns></returns>
         [Route("years")]
         public IHttpActionResult GetYears()
         {
@@ -176,7 +182,7 @@ namespace CarFinder.Controllers
                 // get makes from db.
                 SqlCommand sqlGetMakes = DB.StoredProc("GetMakes", conn);
 
-                if(year.HasValue)
+                if (year.HasValue)
                     sqlGetMakes.Parameters.Add(new SqlParameter("@year", year));
 
                 SqlDataReader rdr = sqlGetMakes.ExecuteReader();
@@ -193,9 +199,6 @@ namespace CarFinder.Controllers
         /// <summary>
         /// Gets a list of models for a given make of a car, optional filtering on a year.
         /// </summary>
-        /// <param name="year"></param>
-        /// <param name="make"></param>
-        /// <returns></returns>
         [Route("models/{make}/{year:int?}")]
         public IHttpActionResult GetModels(string make, int? year = null)
         {
@@ -205,7 +208,7 @@ namespace CarFinder.Controllers
                 SqlCommand sqlGetModels = DB.StoredProc("GetModels", conn);
 
                 sqlGetModels.Parameters.Add(new SqlParameter("@make", make));
-                if (year.HasValue) 
+                if (year.HasValue)
                     sqlGetModels.Parameters.Add(new SqlParameter("@year", year));
 
                 SqlDataReader rdr = sqlGetModels.ExecuteReader();
@@ -221,9 +224,7 @@ namespace CarFinder.Controllers
         /// 
         /// <summary>
         /// get a list of trims for a given car make and model, optionally filter on year.
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        /// </summary>        
         [Route("trims/{make}/{model}/{year:int?}")]
         public IHttpActionResult GetTrims(string make, string model, int? year = null)
         {

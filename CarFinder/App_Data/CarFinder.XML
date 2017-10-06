@@ -493,13 +493,7 @@
             Function that returns all of the cars the fit the given paramters.
             at least one of the params year, make, model must be given.
             trim and page are optional
-            </summary>
-            <param name="year"></param>
-            <param name="make"></param>
-            <param name="model"></param>
-            <param name="trim"></param>
-            <param name="page"></param>
-            <returns></returns>
+            </summary>        
         </member>
         <member name="M:CarFinder.Controllers.CarController.GetCarById(System.Int32)">
             signature: api/cars/{id}
@@ -507,8 +501,6 @@
             <summary>
             Get car with a given id.
             </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
         <member name="M:CarFinder.Controllers.CarController.GetYears">
             signature: api/cars/years
@@ -516,7 +508,6 @@
             <summary>
             Get a list of years for cars in HCL2.
             </summary>
-            <returns></returns>
         </member>
         <member name="M:CarFinder.Controllers.CarController.GetMakes(System.Nullable{System.Int32})">
             Signature: api/{make}/{year?}
@@ -531,30 +522,23 @@
             <summary>
             Gets a list of models for a given make of a car, optional filtering on a year.
             </summary>
-            <param name="year"></param>
-            <param name="make"></param>
-            <returns></returns>
         </member>
         <member name="M:CarFinder.Controllers.CarController.GetTrims(System.String,System.String,System.Nullable{System.Int32})">
             Signature: api/cars/trims/{make}/{model}/{year?}
             
             <summary>
             get a list of trims for a given car make and model, optionally filter on year.
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
+            </summary>        
         </member>
         <member name="M:CarFinder.Models.Car.SetIndexes(System.Data.SqlClient.SqlDataReader)">
             <summary>
             func to set private fields for creation of several cars through the sqldatareadr ctor.
             </summary>
-            <param name="rdr"></param>
         </member>
         <member name="M:CarFinder.Models.Car.#ctor(System.Data.SqlClient.SqlDataReader)">
             <summary>
             ctor to create a car from a sqldatareader. Requires that you previously ran the SetIndexes function.
             </summary>
-            <param name="rdr"></param>
         </member>
         <member name="M:CarFinder.Models.DB.GetOpenConnection">
             <summary>

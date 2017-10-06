@@ -37,23 +37,11 @@ var CarFinder;
             // on update of lists, if the previously selected value is not in the list, then set the selected val to null.
             switch (carList) {
                 case "makes":
-                    this.HCL2.GetMakes(this.queryParams).$promise.then(function (results) {
-                        ctrl.makes = results;
-                        if (results.indexOf(ctrl.carMake) === -1)
-                            ctrl.carMake = null;
-                        // update next field
-                        ctrl.update("models");
-                    });
+                    this.HCL2.GetMakes(this.queryParams).$promise.then(updateMakes);
                     break;
                 case "models":
                     if (this.carMake) {
-                        this.HCL2.GetModels(this.queryParams).$promise.then(function (results) {
-                            ctrl.models = results;
-                            if (results.indexOf(ctrl.carModel) === -1)
-                                ctrl.carModel = null;
-                            // update next field
-                            ctrl.update("trims");
-                        });
+                        this.HCL2.GetModels(this.queryParams).$promise.then(updateModels);
                     }
                     else {
                         // no car make selected, update values and next field.
@@ -63,11 +51,7 @@ var CarFinder;
                     break;
                 case "trims":
                     if (this.carModel) {
-                        this.HCL2.GetTrims(this.queryParams).$promise.then(function (results) {
-                            ctrl.trims = results;
-                            if (results.indexOf(ctrl.carTrim) === -1)
-                                ctrl.carTrim = null;
-                        });
+                        this.HCL2.GetTrims(this.queryParams).$promise.then(updateTrims);
                     }
                     else {
                         // no car model, so set trim to null.
@@ -76,6 +60,25 @@ var CarFinder;
                     // THIS is now the point that I should update the cars listed.
                     this.getCarTable(1);
                     break;
+            }
+            function updateMakes(results) {
+                ctrl.makes = results;
+                if (results.indexOf(ctrl.carMake) === -1)
+                    ctrl.carMake = null;
+                // update next field
+                ctrl.update("models");
+            }
+            function updateModels(results) {
+                ctrl.models = results;
+                if (results.indexOf(ctrl.carModel) === -1)
+                    ctrl.carModel = null;
+                // update next field
+                ctrl.update("trims");
+            }
+            function updateTrims(results) {
+                ctrl.trims = results;
+                if (results.indexOf(ctrl.carTrim) === -1)
+                    ctrl.carTrim = null;
             }
         };
         // function to update the car table.

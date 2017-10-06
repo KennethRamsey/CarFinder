@@ -50,7 +50,6 @@ namespace CarFinder.Models
         /// <summary>
         /// func to set private fields for creation of several cars through the sqldatareadr ctor.
         /// </summary>
-        /// <param name="rdr"></param>
         public static void SetIndexes(SqlDataReader rdr)
         {
             idIndex = rdr.GetOrdinal("id");
@@ -63,27 +62,26 @@ namespace CarFinder.Models
             doorsIndex = rdr.GetOrdinal("doors");
             driveTypeIndex = rdr.GetOrdinal("drive_type");
             transmissionTypeIndex = rdr.GetOrdinal("transmission_type");
-
         }
 
 
         /// <summary>
         /// ctor to create a car from a sqldatareader. Requires that you previously ran the SetIndexes function.
         /// </summary>
-        /// <param name="rdr"></param>
         public Car(SqlDataReader rdr)
         {
-            Id = rdr[idIndex].ToString() ?? "Not Available";
-            Year = rdr[yearIndex].ToString() ?? "Not Available";
-            Make = rdr[makeIndex].ToString() ?? "Not Available";
-            Model = rdr[modelIndex].ToString() ?? "Not Available";
-            Trim = rdr[trimIndex].ToString() ?? "Not Available";
-            TopSpeed = rdr[topSpeedIndex].ToString() ?? "Not Available";
-            Seats = rdr[seatsIndex].ToString() ?? "Not Available";
-            Doors = rdr[doorsIndex].ToString() ?? "Not Available";
-            DriveType = rdr[driveTypeIndex].ToString() ?? "Not Available";
-            TransmissionType = rdr[transmissionTypeIndex].ToString() ?? "Not Available";
+            string Get(int i) => rdr[i].ToString() ?? "Not Available";
 
+            Id = Get(idIndex);
+            Year = Get(yearIndex);
+            Make = Get(makeIndex);
+            Model = Get(modelIndex);
+            Trim = Get(trimIndex);
+            TopSpeed = Get(topSpeedIndex);
+            Seats = Get(seatsIndex);
+            Doors = Get(doorsIndex);
+            DriveType = Get(driveTypeIndex);
+            TransmissionType = Get(transmissionTypeIndex);
         }
     }
 }
