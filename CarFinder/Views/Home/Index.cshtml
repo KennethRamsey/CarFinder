@@ -83,7 +83,7 @@
                     <td>{{car.Model}}</td>
                     <td>{{car.Trim}}</td>
                     <td class="center-item go-search" style="width:100px;">
-                        <google-thumbnail car="car" search-term="{{car.Year + ' ' + car.Make + ' ' + car.Model + ' ' + car.Trim}}" />
+                        <google-thumbnail car="car" search-term="{{car.Year + ' ' + car.Make + ' ' + car.Model}}" /> <!-- removed trim, caused searches to find nothing. -->
                     </td>
                     <td class="text-center"><a class="btn btn-primary" ng-click="vm.showDetailsModal(car)">Details</a></td>
                 </tr>
